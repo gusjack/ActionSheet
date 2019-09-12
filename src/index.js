@@ -1,9 +1,7 @@
 import ActionPannel from './action-pannel.vue'
-import CreateAPI from 'vue-create-api'
 
 const install = (Vue) => {
-  Vue.use(CreateAPI)
-  Vue.createAPI(ActionPannel, true)
+  Vue.component('vue-custom-pannel', ActionPannel)
 }
 
 export default {

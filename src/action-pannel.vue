@@ -6,62 +6,40 @@
       .action-panel-bar(
         ref="action-panel-bar"
         v-if="open")
-        .action-panel
-          .action-item(v-for="(item, idx) in actions" @click="clickHandle(item, idx)")
-            .action-icon.iconfont(:class="item.icon")
-            .action-text {{item.text}}
-        .action-button(@click="closePannel") 取消
+        .action-panel(:style="{ 'min-height' : mainHeight }")
+          slot
 </template>
 
 <script>
 export default {
   name: 'action-pannel',
-  props: {
-    actions: {
-      type: Array,
-      default: () => {
-        return [{
-          icon: 'icon-article',
-          text: '分享'
-        }]
-      }
-    }
-  },
   data () {
     return {
       open: false
     }
   },
+  props: {
+    mainHeight: {
+      type: String,
+      default: '30px'
+    }
+  },
+  watch: {
+    open: function (val) {
+      if (val) {
+        document.addEventListener('touchmove', this.disableScroll, { passive: false })
+      } else {
+        document.removeEventListener('touchmove', this.disableScroll)
+      }
+    }
+  },
   methods: {
     closePannel: function () {
       this.open = false
-      setTimeout(() => {
-        this.remove()
-      }, 300)
-      document.removeEventListener('touchmove', this.disableScroll)
-    },
-    clickHandle: function (item, idx) {
-      this.$emit('select', {
-        item,
-        idx
-      })
     },
     disableScroll: function (e) {
       e.preventDefault()
     }
-  },
-  mounted () {
-    this.open = true
-    document.addEventListener('touchmove', this.disableScroll, { passive: false })
-  },
-  activated () {
-    document.addEventListener('touchmove', this.disableScroll, { passive: false })
-  },
-  deactivated () {
-    document.removeEventListener('touchmove', this.disableScroll)
-  },
-  destroyed () {
-    document.removeEventListener('touchmove', this.disableScroll)
   }
 }
 </script>
@@ -95,41 +73,12 @@ $supperColor: #eee;
     position: fixed
     bottom: 0
     transition: all .3s;
+    left: 0;
     z-index: 99
   .action-panel
     border-radius: 3px 3px 0 0
     width: 100vw;
     background: white;
     z-index: 99
-    padding: 30px 15px 15px
-    @include flex($justifyContent: flex-start)
     flex-wrap: wrap;
-    .action-item
-      @include flex($flex: none, $flexDirection: column)
-      color: #555;
-      width: calc((100vw - 30px) / 6)
-      margin-bottom: 12px;
-      .action-icon
-        font-size: 30px
-        margin-bottom: 6px
-      .action-text
-        font-size: 12px;
-        letter-spacing: 0;
-        text-align: center;
-        line-height: 12px;
-    .action-item:nth-last-child(1)
-      margin-right: 0
-  .action-button:active
-    background: $supperColor
-  .action-button
-    height: 53px
-    width: 100vw
-    background: white;
-    @include flex()
-    font-size: 15px;
-    border-top: 1px solid #E6E7E8
-    color: #919699;
-    letter-spacing: 0;
-    text-align: center;
-    line-height: 15px;
 </style>
